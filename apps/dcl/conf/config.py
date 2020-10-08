@@ -21,7 +21,7 @@ class Config(object):
         # put annotation txt file in $PATH/anno
         if args.dataset == 'CUB':
             self.dataset = args.dataset
-            self.anno_root = './datasets/CUB_200_2011/anno'
+            self.anno_root = '/home/zjkj/yantao/dcl/datasets/CUB_200_2011/anno'
             # 正式环境
             self.num_brands = 1500 # 249 # 206 # 品牌数
             self.num_bmys = 20000 # 3539 # 3421 # 年款数
@@ -38,16 +38,16 @@ class Config(object):
         else:
             raise Exception('dataset not defined ???')
         # 指定训练和测试数据集文件
+        '''
         # 正式环境
         train_ds_file = 'fds_train_ds_20200926.txt'
         val_ds_file = 'wxs_ftds_20201005.txt'
         test_ds_file = 'wxs_ftds_20201005.txt'
         '''
         # 无锡所测试程序
-        train_ds_file = 'wxs_bid_brand_train_ds_20201004.txt'
-        val_ds_file = 'wxs_bid_brand_test_ds_20201004.txt'
-        test_ds_file = 'wxs_bid_brand_test_ds_20201004.txt'
-        '''
+        train_ds_file = 'bid_brand_train_ds_20200930.txt'
+        val_ds_file = 'bid_brand_test_ds_20200925.txt'
+        test_ds_file = 'bid_brand_test_ds_20200925.txt'
         if 'train' in get_list:
             self.train_anno = pd.read_csv(os.path.join(self.anno_root, train_ds_file),\
                                            sep="*",\
