@@ -2,20 +2,25 @@
 import os
 import argparse
 from apps.dcl.conf.config import Config
+from apps.dcl.transforms.transform_manager import TransformManager
 
 class DclApp(object):
     def __init__(self):
         self.refl = 'apps.dcl.DclApp'
 
     def startup(self, args={}):
-        print('DCL应用系统 v0.0.2')
+        print('DCL应用系统 v0.0.3')
         os.environ['CUDA_VISIBLE_DEVICES'] = '2'
         args = self.parse_args()
         config = Config(args, 'train')
         config.cls_2 = args.cls_2
         config.cls_2xmul = args.cls_mul
         assert config.cls_2 ^ config.cls_2xmul
-        print('引入Config类')
+        transformers = TransformManager.load_data_transformers(
+            args.resize_resolution, args.crop_resolution, 
+            args.swap_num
+        )
+        print('引入transformers...')
 
 
 

@@ -21,7 +21,7 @@ class Config(object):
         # put annotation txt file in $PATH/anno
         if args.dataset == 'CUB':
             self.dataset = args.dataset
-            self.anno_root = '/home/zjkj/yantao/dcl/datasets/CUB_200_2011/anno'
+            self.anno_root = './support/datasets'
             # 正式环境
             self.num_brands = 1500 # 249 # 206 # 品牌数
             self.num_bmys = 20000 # 3539 # 3421 # 年款数
