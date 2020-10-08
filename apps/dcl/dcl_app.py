@@ -1,15 +1,26 @@
 # DCL模型应用系统
 import os
 import argparse
+from apps.dcl.conf.config import Config
 
 class DclApp(object):
     def __init__(self):
         self.refl = 'apps.dcl.DclApp'
 
     def startup(self, args={}):
-        print('DCL应用系统 v0.0.1')
+        print('DCL应用系统 v0.0.2')
         os.environ['CUDA_VISIBLE_DEVICES'] = '2'
         args = self.parse_args()
+        config = Config(args, 'train')
+        config.cls_2 = args.cls_2
+        config.cls_2xmul = args.cls_mul
+        assert config.cls_2 ^ config.cls_2xmul
+        print('引入Config类')
+
+
+
+
+
         
     def auto_load_resume(self, load_dir):
         folders = os.listdir(load_dir)
