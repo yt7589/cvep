@@ -21,6 +21,7 @@ class Config(object):
         # put annotation txt file in $PATH/anno
         if args.dataset == 'CUB':
             self.dataset = args.dataset
+            self.rawdata_root = './dataset/aircraft/data'
             self.anno_root = './support/datasets'
             # 正式环境
             self.num_brands = 1500 # 249 # 206 # 品牌数
