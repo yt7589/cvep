@@ -7,13 +7,14 @@ import torch.backends.cudnn as cudnn
 from apps.dcl.conf.config import Config
 from apps.dcl.transforms.transform_manager import TransformManager
 from apps.dcl.ds.stvr_dataset import StvrDataset
+from apps.dcl.nnm.dcl_model import DclModel
 
 class DclApp(object):
     def __init__(self):
         self.refl = 'apps.dcl.DclApp'
 
     def startup(self, args={}):
-        print('DCL应用系统 v0.0.4')
+        print('DCL应用系统 v0.0.5')
         os.environ['CUDA_VISIBLE_DEVICES'] = '2'
         args = self.parse_args()
         config = Config(args, 'train')
@@ -82,6 +83,7 @@ class DclApp(object):
         setattr(dataloader['val'], 'num_cls', config.num_brands)
         cudnn.benchmark = True
         print('Choose model and train set', flush=True)
+        model = DclModel(config)
 
 
 
