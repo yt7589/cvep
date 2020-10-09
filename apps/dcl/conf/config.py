@@ -2,6 +2,11 @@
 import os
 import pandas as pd
 
+pretrained_model = {
+    'resnet50' : './models/pretrained/resnet50-19c8e357.pth',
+    'senet154' : './models/pretrained/senet154-c7b49a05.pth'
+}
+
 class Config(object):
     def __init__(self, args, version):
         if version == 'train':
