@@ -53,9 +53,9 @@ class DclApp(object):
                     shuffle=True,\
                     num_workers=args.train_num_workers,\
                     collate_fn=StvrDataset.collate_fn4train \
-                        if not Config.use_backbone \
+                        if not config.use_backbone \
                         else StvrDataset.collate_fn4backbone,
-                    drop_last=True if Config.use_backbone else False,
+                    drop_last=True if config.use_backbone else False,
                     pin_memory=True)
         setattr(dataloader['train'], 'total_item_len', len(train_set))
         dataloader['trainval'] = torch.utils.data.DataLoader(trainval_set,\
@@ -63,23 +63,23 @@ class DclApp(object):
                     shuffle=False,\
                     num_workers=args.val_num_workers,\
                     collate_fn=StvrDataset.collate_fn4val \
-                        if not Config.use_backbone \
+                        if not config.use_backbone \
                         else StvrDataset.collate_fn4backbone,
-                    drop_last=True if Config.use_backbone else False,
+                    drop_last=True if config.use_backbone else False,
                     pin_memory=True)
         setattr(dataloader['trainval'], 'total_item_len', len(trainval_set))
-        setattr(dataloader['trainval'], 'num_cls', Config.num_brands)
+        setattr(dataloader['trainval'], 'num_cls', config.num_brands)
         dataloader['val'] = torch.utils.data.DataLoader(val_set,\
                     batch_size=args.val_batch,\
                     shuffle=False,\
                     num_workers=args.val_num_workers,\
                     collate_fn=StvrDataset.pil_loadercollate_fn4test \
-                        if not Config.use_backbone \
+                        if not config.use_backbone \
                         else StvrDataset.collate_fn4backbone,
-                    drop_last=True if Config.use_backbone else False,
+                    drop_last=True if config.use_backbone else False,
                     pin_memory=True)
         setattr(dataloader['val'], 'total_item_len', len(val_set))
-        setattr(dataloader['val'], 'num_cls', Config.num_brands)
+        setattr(dataloader['val'], 'num_cls', config.num_brands)
         cudnn.benchmark = True
         print('Choose model and train set', flush=True)
 
