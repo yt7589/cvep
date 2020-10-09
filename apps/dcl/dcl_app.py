@@ -1,6 +1,9 @@
 # DCL模型应用系统
 import os
 import argparse
+import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
 from apps.dcl.conf.config import Config
 from apps.dcl.transforms.transform_manager import TransformManager
 from apps.dcl.ds.stvr_dataset import StvrDataset
@@ -44,7 +47,41 @@ class DclApp(object):
                             swap_size=args.swap_num, \
                           totensor = transformers["test_totensor"],\
                           test=True)
-        print('add dataset is OK!')
+        dataloader = {}
+        dataloader['train'] = torch.utils.data.DataLoader(train_set,\
+                    batch_size=args.train_batch,\
+                    shuffle=True,\
+                    num_workers=args.train_num_workers,\
+                    collate_fn=StvrDataset.collate_fn4train \
+                        if not Config.use_backbone \
+                        else StvrDataset.collate_fn4backbone,
+                    drop_last=True if Config.use_backbone else False,
+                    pin_memory=True)
+        setattr(dataloader['train'], 'total_item_len', len(train_set))
+        dataloader['trainval'] = torch.utils.data.DataLoader(trainval_set,\
+                    batch_size=args.val_batch,\
+                    shuffle=False,\
+                    num_workers=args.val_num_workers,\
+                    collate_fn=StvrDataset.collate_fn4val \
+                        if not Config.use_backbone \
+                        else StvrDataset.collate_fn4backbone,
+                    drop_last=True if Config.use_backbone else False,
+                    pin_memory=True)
+        setattr(dataloader['trainval'], 'total_item_len', len(trainval_set))
+        setattr(dataloader['trainval'], 'num_cls', Config.num_brands)
+        dataloader['val'] = torch.utils.data.DataLoader(val_set,\
+                    batch_size=args.val_batch,\
+                    shuffle=False,\
+                    num_workers=args.val_num_workers,\
+                    collate_fn=StvrDataset.pil_loadercollate_fn4test \
+                        if not Config.use_backbone \
+                        else StvrDataset.collate_fn4backbone,
+                    drop_last=True if Config.use_backbone else False,
+                    pin_memory=True)
+        setattr(dataloader['val'], 'total_item_len', len(val_set))
+        setattr(dataloader['val'], 'num_cls', Config.num_brands)
+        cudnn.benchmark = True
+        print('Choose model and train set', flush=True)
 
 
 
