@@ -3,13 +3,14 @@ import os
 import argparse
 from apps.dcl.conf.config import Config
 from apps.dcl.transforms.transform_manager import TransformManager
+from apps.dcl.ds.stvr_dataset import StvrDataset
 
 class DclApp(object):
     def __init__(self):
         self.refl = 'apps.dcl.DclApp'
 
     def startup(self, args={}):
-        print('DCL应用系统 v0.0.3')
+        print('DCL应用系统 v0.0.4')
         os.environ['CUDA_VISIBLE_DEVICES'] = '2'
         args = self.parse_args()
         config = Config(args, 'train')
@@ -20,7 +21,30 @@ class DclApp(object):
             args.resize_resolution, args.crop_resolution, 
             args.swap_num
         )
-        print('引入transformers...')
+        # inital dataloader
+        train_set = StvrDataset(Config = config,\
+                            anno = config.train_anno,\
+                            common_aug = transformers["common_aug"],\
+                            swap = transformers["swap"],\
+                            swap_size=args.swap_num, \
+                            totensor = transformers["train_totensor"],\
+                            train = True)
+        trainval_set = StvrDataset(Config = config,\
+                            anno = config.val_anno,\
+                            common_aug = transformers["None"],\
+                            swap = transformers["None"],\
+                            swap_size=args.swap_num, \
+                            totensor = transformers["val_totensor"],\
+                            train = False,
+                            train_val = True)
+        val_set = StvrDataset(Config = config,\
+                          anno = config.val_anno,\
+                          common_aug = transformers["None"],\
+                          swap = transformers["None"],\
+                            swap_size=args.swap_num, \
+                          totensor = transformers["test_totensor"],\
+                          test=True)
+        print('add dataset is OK!')
 
 
 
