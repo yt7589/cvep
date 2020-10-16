@@ -107,8 +107,8 @@ class DclApp(object):
         print('Set cache dir', flush=True)
         time = datetime.datetime.now()
         filename = '%s_%d%d%d_%s'%(args.cvep, time.month, time.day, time.hour, config.dataset)
-        save_dir = os.path.join(Config.save_dir, filename)
-        print('save_dir: {0} + {1};'.format(Config.save_dir, filename))
+        save_dir = os.path.join(config.save_dir, filename)
+        print('save_dir: {0} + {1};'.format(config.save_dir, filename))
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         model.cuda()
