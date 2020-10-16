@@ -5,6 +5,8 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
+import torch.optim as optim
+from torch.optim import lr_scheduler
 from apps.dcl.conf.config import Config
 from apps.dcl.transforms.transform_manager import TransformManager
 from apps.dcl.ds.stvr_dataset import StvrDataset
@@ -113,7 +115,38 @@ class DclApp(object):
             os.makedirs(save_dir)
         model.cuda()
         model = nn.DataParallel(model)
-        print('^_^ The End ^_^')
+        # optimizer prepare
+        if Config.use_backbone:
+            ignored_params = list(map(id, model.module.classifier.parameters())) \
+                        + list(map(id, model.module.brand_clfr.parameters()))
+        else:
+            ignored_params1 = list(map(id, model.module.classifier.parameters()))
+            ignored_params1x = list(map(id, model.module.brand_clfr.parameters()))
+            ignored_params2 = list(map(id, model.module.classifier_swap.parameters()))
+            ignored_params3 = list(map(id, model.module.Convmask.parameters()))
+            ignored_params = ignored_params1 + ignored_params1x + ignored_params2 + ignored_params3 
+        print('the num of new layers:', len(ignored_params), flush=True)
+        base_params = filter(lambda p: id(p) not in ignored_params, model.module.parameters())
+        lr_ratio = args.cls_lr_ratio
+        base_lr = args.base_lr
+        momentum = 0.9
+        if Config.use_backbone:
+            optimizer = optim.SGD([{'params': base_params},
+                                   {'params': model.module.classifier.parameters(), 'lr': base_lr},
+                                   {'params': model.module.brand_clfr.parameters(), 'lr': base_lr}
+                                   ], lr = base_lr, momentum=momentum)
+        else:
+            optimizer = optim.SGD([{'params': base_params},
+                                   {'params': model.module.classifier.parameters(), 'lr': lr_ratio*base_lr},
+                                   {'params': model.module.brand_clfr.parameters(), 'lr': lr_ratio*base_lr},
+                                   {'params': model.module.classifier_swap.parameters(), 'lr': lr_ratio*base_lr},
+                                   {'params': model.module.Convmask.parameters(), 'lr': lr_ratio*base_lr},
+                                  ], lr = base_lr, momentum=momentum)
+
+        exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=args.decay_step, gamma=0.1)
+        # *******************
+        # *******************
+        print('^_^ The End v0.0.1  ^_^')
 
 
 
