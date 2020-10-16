@@ -146,7 +146,7 @@ class DclApp(object):
         exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=args.decay_step, gamma=0.1)
         # *******************
         # *******************
-        print('^_^ The End v0.0.1  ^_^')
+        print('^_^ The End v0.0.2  ^_^')
 
 
 
