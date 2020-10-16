@@ -1,5 +1,6 @@
 # DCL模型应用系统
 import os
+import datetime
 import argparse
 import torch
 import torch.nn as nn
@@ -84,6 +85,37 @@ class DclApp(object):
         cudnn.benchmark = True
         print('Choose model and train set', flush=True)
         model = DclModel(config)
+        # load model
+        if (args.resume is None) and (not args.auto_resume):
+            print('train from imagenet pretrained models ...', flush=True)
+        else:
+            if not args.resume is None:
+                resume = args.resume
+                print('load from pretrained checkpoint %s ...'% resume, flush=True)
+            elif args.auto_resume:
+                resume = self.auto_load_resume(Config.save_dir)
+                print('load from %s ...'%resume, flush=True)
+            else:
+                raise Exception("no checkpoints to load")
+
+            model_dict = model.state_dict()
+            pretrained_dict = torch.load(resume)
+            print('train.py Ln193 resume={0};'.format(resume))
+            pretrained_dict = {k[7:]: v for k, v in pretrained_dict.items() if k[7:] in model_dict}
+            model_dict.update(pretrained_dict)
+            model.load_state_dict(model_dict)
+        print('Set cache dir', flush=True)
+        time = datetime.datetime.now()
+        filename = '%s_%d%d%d_%s'%(args.cam, time.month, time.day, time.hour, Config.dataset)
+        save_dir = os.path.join(Config.save_dir, filename)
+        print('save_dir: {0} + {1};'.format(Config.save_dir, filename))
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        model.cuda()
+        cam_main_model = model
+        cam_model = model.model
+        model = nn.DataParallel(model)
+        print('^_^ The End ^_^')
 
 
 
