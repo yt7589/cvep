@@ -116,7 +116,7 @@ class DclApp(object):
         model.cuda()
         model = nn.DataParallel(model)
         # optimizer prepare
-        if Config.use_backbone:
+        if config.use_backbone:
             ignored_params = list(map(id, model.module.classifier.parameters())) \
                         + list(map(id, model.module.brand_clfr.parameters()))
         else:
