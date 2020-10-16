@@ -1,6 +1,7 @@
 #
 import random
 import numbers
+from apps.dcl.transforms import data_functional as F
 
 class RandomRotation(object):
     """Rotate the image by angle.
