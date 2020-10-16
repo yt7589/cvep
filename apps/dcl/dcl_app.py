@@ -106,14 +106,12 @@ class DclApp(object):
             model.load_state_dict(model_dict)
         print('Set cache dir', flush=True)
         time = datetime.datetime.now()
-        filename = '%s_%d%d%d_%s'%(args.cam, time.month, time.day, time.hour, Config.dataset)
+        filename = '%s_%d%d%d_%s'%(args.cvep, time.month, time.day, time.hour, config.dataset)
         save_dir = os.path.join(Config.save_dir, filename)
         print('save_dir: {0} + {1};'.format(Config.save_dir, filename))
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         model.cuda()
-        cam_main_model = model
-        cam_model = model.model
         model = nn.DataParallel(model)
         print('^_^ The End ^_^')
 
@@ -162,8 +160,8 @@ class DclApp(object):
                             default=10.0, type=float)
         parser.add_argument('--start_epoch', dest='start_epoch',
                             default=0,  type=int)
-        parser.add_argument('--detail', dest='cam',
-                            default='cam', type=str)
+        parser.add_argument('--detail', dest='cvep',
+                            default='cvep', type=str)
         parser.add_argument('--size', dest='resize_resolution',
                             default=224, type=int)
         parser.add_argument('--crop', dest='crop_resolution',
