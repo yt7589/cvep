@@ -20,7 +20,7 @@ class DclApp(object):
 
     def startup(self, args={}):
         print('DCL应用系统 v0.0.5')
-        os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+        os.environ['CUDA_VISIBLE_DEVICES'] = '0'
         args = self.parse_args()
         config = Config(args, 'train')
         config.cls_2 = args.cls_2
