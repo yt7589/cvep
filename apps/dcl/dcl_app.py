@@ -130,7 +130,7 @@ class DclApp(object):
         lr_ratio = args.cls_lr_ratio
         base_lr = args.base_lr
         momentum = 0.9
-        if Config.use_backbone:
+        if config.use_backbone:
             optimizer = optim.SGD([{'params': base_params},
                                    {'params': model.module.classifier.parameters(), 'lr': base_lr},
                                    {'params': model.module.brand_clfr.parameters(), 'lr': base_lr}
