@@ -11,10 +11,12 @@ from apps.dcl.conf.config import Config
 from apps.dcl.transforms.transform_manager import TransformManager
 from apps.dcl.ds.stvr_dataset import StvrDataset
 from apps.dcl.nnm.dcl_model import DclModel
+from apps.dcl.dcl_engine import DclEngine
 
 class DclApp(object):
     def __init__(self):
         self.refl = 'apps.dcl.DclApp'
+        self.engine = DclEngine()
 
     def startup(self, args={}):
         print('DCL应用系统 v0.0.5')
@@ -146,7 +148,18 @@ class DclApp(object):
         exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=args.decay_step, gamma=0.1)
         # *******************
         # *******************
-        print('^_^ The End v0.0.2  ^_^')
+        self.engine.train(config,
+            model,
+            epoch_num=args.epoch,
+            start_epoch=args.start_epoch,
+            optimizer=optimizer,
+            exp_lr_scheduler=exp_lr_scheduler,
+            data_loader=dataloader,
+            save_dir=save_dir,
+            data_size=args.crop_resolution,
+            savepoint=args.save_point,
+            checkpoint=args.check_point)
+        print('^_^ The End v0.0.3  ^_^')
 
 
 
