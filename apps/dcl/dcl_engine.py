@@ -66,10 +66,13 @@ class DclEngine(object):
             brand_labels_swap, swap_law = None, None, \
             None, None, None, None
         org_brand_labels, swap_loss, law_loss = None, None, None
+        print('DclEngine.train 3')
         for epoch in range(start_epoch,epoch_num-1):
+            print('DclEngine.train 4: epoch:{0};'.format(epoch))
             model.train(True)
             save_grad = []
             for batch_cnt, data in enumerate(data_loader['train']):
+                print('DclEngine.train 5: batch_cnt={0};'.format(batch_cnt))
                 step += 1
                 loss = 0
                 model.train(True)
@@ -87,13 +90,14 @@ class DclEngine(object):
                     bmy_labels = Variable(torch.from_numpy(np.array(bmy_labels)).cuda())
                     brand_labels_swap = Variable(torch.from_numpy(np.array(brand_labels_swap)).cuda())
                     swap_law = Variable(torch.from_numpy(np.array(swap_law)).float().cuda())
-
+                print('DclEngine.train 6')
                 optimizer.zero_grad()
 
                 if inputs.size(0) < 2*train_batch_size:
                     outputs = model(inputs, inputs[0:-1:2])
                 else:
                     outputs = model(inputs, None)
+                print('DclEngine.train 7')
 
                 if config.use_focal_loss:
                     ce_loss_brand = get_focal_loss(outputs[0], brand_labels)
@@ -102,6 +106,7 @@ class DclEngine(object):
                     ce_loss_brand = get_ce_loss(outputs[0], brand_labels)
                     ce_loss_bmy = get_ce_loss(outputs[-1], bmy_labels)
                 ce_loss = ce_loss_brand + bmy_weight * ce_loss_bmy
+                print('DclEngine.train 8')
 
                 if config.use_Asoftmax:
                     fetch_batch = brand_labels.size(0)
@@ -110,10 +115,12 @@ class DclEngine(object):
                     else:
                         angle_loss = get_angle_loss(outputs[3], brand_labels[0:fetch_batch:2])
                     loss += angle_loss
+                print('DclEngine.train 9')
 
                 loss += ce_loss
                 ce_loss_val = ce_loss.detach().item()
                 ce_losses = np.append(ce_losses, ce_loss_val)
+                print('DclEngine.train 10')
 
                 alpha_ = 1
                 beta_ = 1
@@ -123,15 +130,18 @@ class DclEngine(object):
                     loss += swap_loss
                     law_loss = add_loss(outputs[2], swap_law) * gamma_
                     loss += law_loss
+                print('DclEngine.train 11')
 
                 loss.backward()
                 torch.cuda.synchronize()
                 optimizer.step()
                 exp_lr_scheduler.step(epoch)
                 torch.cuda.synchronize()
+                print('DclEngine.train 12')
 
 
                 if config.use_dcl:
+                    print('DclEngine.train 13')
                     if ce_loss_mu > 0 and ce_loss_val > ce_loss_mu + 3.0*ce_loss_std:
                         # 记录下这个批次，可能是该批次有标注错误情况
                         print('记录可疑批次信息: loss={0}; threshold={1};'.format(ce_loss_val, ce_loss_mu + 2.0*ce_loss_std))
@@ -152,6 +162,7 @@ class DclEngine(object):
                                 )
                     
                 if config.use_backbone:
+                    print('DclEngine.train 14')
                     print('epoch{}: step: {:-8d} / {:d} loss=ce_loss+'
                                 'swap_loss+law_loss: {:6.4f} = {:6.4f} '.format(
                                     epoch, step % train_epoch_step, 
@@ -162,9 +173,11 @@ class DclEngine(object):
                 rec_loss.append(loss.detach().item())
 
                 train_loss_recorder.update(loss.detach().item())
+                print('DclEngine.train 16')
 
                 # evaluation & save
                 if step % checkpoint == 0:
+                    print('DclEngine.train 17')
                     rec_loss = []
                     print(32*'-', flush=True)
                     print('step: {:d} / {:d} global_step: {:8.2f} train_epoch: {:04d} rec_train_loss: {:6.4f}'.format(step, train_epoch_step, 1.0*step/train_epoch_step, epoch, train_loss_recorder.get_val()), flush=True)
@@ -207,10 +220,9 @@ class DclEngine(object):
                         steps = np.array([], dtype=np.int)
                         train_accs = np.array([], dtype=np.float32)
                         test_accs = np.array([], dtype=np.float32)
-                    
-
                 # save only
                 elif step % savepoint == 0:
+                    print('DclEngine.train 18')
                     train_loss_recorder.update(rec_loss)
                     rec_loss = []
                     save_path = os.path.join(save_dir, 'savepoint_weights-%d-%s.pth'%(step, dt()))
