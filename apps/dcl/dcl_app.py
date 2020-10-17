@@ -146,6 +146,7 @@ class DclApp(object):
                                   ], lr = base_lr, momentum=momentum)
 
         exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=args.decay_step, gamma=0.1)
+        print('dcl_app.py before call train')
         # *******************
         # *******************
         self.engine.train(config,

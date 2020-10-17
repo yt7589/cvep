@@ -30,6 +30,7 @@ class DclEngine(object):
             ):
         # savepoint: save without evalution
         # checkpoint: save with evaluation
+        print('DclEngine.train 1')
         bmy_weight = 1.0 # 1.5 # 决定品牌分支在学习中权重
         step = 0
         eval_train_flag = False
@@ -58,6 +59,8 @@ class DclEngine(object):
         get_ce_loss = nn.CrossEntropyLoss()
         get_focal_loss = FocalLoss()
         get_angle_loss = AngleLoss()
+
+        print('DclEngine.train 2')
 
         inputs, brand_labels, img_names, bmy_labels, \
             brand_labels_swap, swap_law = None, None, \
