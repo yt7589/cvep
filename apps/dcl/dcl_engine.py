@@ -92,10 +92,13 @@ class DclEngine(object):
                     swap_law = Variable(torch.from_numpy(np.array(swap_law)).float().cuda())
                 print('DclEngine.train 6')
                 optimizer.zero_grad()
+                print('DclEngine.train 6.1')
 
                 if inputs.size(0) < 2*train_batch_size:
+                    print('DclEngine.train 6.2')
                     outputs = model(inputs, inputs[0:-1:2])
                 else:
+                    print('DclEngine.train 6.3')
                     outputs = model(inputs, None)
                 print('DclEngine.train 7')
 

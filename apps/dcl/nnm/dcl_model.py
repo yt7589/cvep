@@ -75,6 +75,7 @@ class DclModel(nn.Module):
         self.initialize_bmy_masks()
 
     def forward(self, x, last_cont=None, run_mode=RUN_MODE_NORMAL):
+        print('DclModel.forward 1')
         mask = None
         x = self.model(x)
         if self.use_dcl:
