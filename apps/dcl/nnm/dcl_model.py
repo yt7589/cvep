@@ -84,21 +84,26 @@ class DclModel(nn.Module):
             mask = torch.tanh(mask)
             mask = mask.view(mask.size(0), -1)
         x = self.avgpool(x)
+        print('DclModel.forward 2')
         if DclModel.RUN_MODE_FEATURE_EXTRACT == run_mode:
             return x
         #x = x.view(x.size(0), -1)
         #x = x.view(x.size(0), x.size(1))
         x = torch.flatten(x, start_dim=1, end_dim=-1)
         out = []
+        print('DclModel.forward 3')
         y_bmy = F.softmax(self.classifier(x), dim=1)
+        print('DclModel.forward 4')
         #y_bmy = self.classifier(x)
         out.append(y_bmy)
         #y_brand = self.brand_clfr(x)
         y_brand = F.softmax(self.brand_clfr(x), dim=1)
+        print('DclModel.forward 5')
 
         if self.use_dcl:
             out.append(self.classifier_swap(x))
             out.append(mask)
+        print('DclModel.forward 6')
 
         if self.use_Asoftmax:
             if last_cont is None:
@@ -110,6 +115,7 @@ class DclModel(nn.Module):
                 last_x = last_x.view(last_x.size(0), -1)
                 out.append(self.Aclassifier(last_x))
         out.append(y_brand)
+        print('DclModel.forward 7')
         '''
         if not self.training:
             # 由品牌决定年款输出（仅在实际运行中开启）
