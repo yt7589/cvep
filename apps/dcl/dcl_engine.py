@@ -103,9 +103,11 @@ class DclEngine(object):
                 print('DclEngine.train 7')
 
                 if config.use_focal_loss:
+                    print('DclEngine.train 7.1 use_focal_loss')
                     ce_loss_brand = get_focal_loss(outputs[0], brand_labels)
                     ce_loss_bmy = get_focal_loss(outputs[-1], bmy_labels)
                 else:
+                    print('DclEngine.train 7.2 use_ce_loss')
                     ce_loss_brand = get_ce_loss(outputs[0], brand_labels)
                     ce_loss_bmy = get_ce_loss(outputs[-1], bmy_labels)
                 ce_loss = ce_loss_brand + bmy_weight * ce_loss_bmy
