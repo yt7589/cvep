@@ -78,6 +78,7 @@ class DclModel(nn.Module):
         print('DclModel.forward 1')
         mask = None
         x = self.model(x)
+        print('DclModel.forward 1.1')
         if self.use_dcl:
             mask = self.Convmask(x)
             mask = self.avgpool2(mask)
