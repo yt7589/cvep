@@ -123,15 +123,18 @@ class DclEngine(object):
                 loss += ce_loss
                 ce_loss_val = ce_loss.detach().item()
                 ce_losses = np.append(ce_losses, ce_loss_val)
-                print('DclEngine.train 10 os={0};'.format(len(outputs)))
+                print('DclEngine.train 10 {0} {1} {2} {3};'.format(
+                    outputs[0].shape, outputs[1].shape,
+                    outputs[2].shape, outputs[3].shape
+                ))
 
                 alpha_ = 1
                 beta_ = 1
                 gamma_ = 0.01 if config.dataset == 'STCAR' or config.dataset == 'AIR' else 1
                 if config.use_dcl:
-                    swap_loss = get_ce_loss(outputs[0], brand_labels_swap) * beta_
+                    swap_loss = get_ce_loss(outputs[1], brand_labels_swap) * beta_
                     loss += swap_loss
-                    law_loss = add_loss(outputs[1], swap_law) * gamma_
+                    law_loss = add_loss(outputs[2], swap_law) * gamma_
                     loss += law_loss
                 print('DclEngine.train 11')
 
