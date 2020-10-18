@@ -192,7 +192,7 @@ class DclApp(object):
         parser.add_argument('--sp', dest='save_point',
                             default=1000, type=int)
         parser.add_argument('--tb', dest='train_batch',
-                            default=128, type=int)
+                            default=32, type=int)
         parser.add_argument('--tnw', dest='train_num_workers',
                             default=16, type=int)
         parser.add_argument('--vb', dest='val_batch',
